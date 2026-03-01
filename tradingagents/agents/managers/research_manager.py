@@ -28,14 +28,16 @@ Additionally, develop a detailed investment plan for the trader. This should inc
 Your Recommendation: A decisive stance supported by the most convincing arguments.
 Rationale: An explanation of why these arguments lead to your conclusion.
 Strategic Actions: Concrete steps for implementing the recommendation.
-Take into account your past mistakes on similar situations. Use these insights to refine your decision-making and ensure you are learning and improving. Present your analysis conversationally, as if speaking naturally, without special formatting. 
+Take into account your past mistakes on similar situations. Use these insights to refine your decision-making and ensure you are learning and improving. Present your analysis conversationally, as if speaking naturally, without special formatting.
 
 Here are your past reflections on mistakes:
 \"{past_memory_str}\"
 
 Here is the debate:
 Debate History:
-{history}"""
+{history}
+
+Please ensure your entire response, including analysis, debate content, and final decisions, is written in Chinese (请务必使用中文输出你的分析报告、辩论内容和最终决策)."""
         response = llm.invoke(prompt)
 
         new_investment_debate_state = {

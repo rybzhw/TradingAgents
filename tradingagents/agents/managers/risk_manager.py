@@ -36,12 +36,14 @@ Deliverables:
 
 ---
 
-**Analysts Debate History:**  
+**Analysts Debate History:**
 {history}
 
 ---
 
-Focus on actionable insights and continuous improvement. Build on past lessons, critically evaluate all perspectives, and ensure each decision advances better outcomes."""
+Focus on actionable insights and continuous improvement. Build on past lessons, critically evaluate all perspectives, and ensure each decision advances better outcomes.
+
+Please ensure your entire response, including analysis, debate content, and final decisions, is written in Chinese (请务必使用中文输出你的分析报告、辩论内容和最终决策)."""
 
         response = llm.invoke(prompt)
 
