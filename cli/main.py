@@ -165,7 +165,7 @@ class MessageBuffer:
             if content is not None:
                 latest_section = section
                 latest_content = content
-               
+
         if latest_section and latest_content:
             # Format the current section for display
             section_titles = {
@@ -462,7 +462,7 @@ def update_display(layout, spinner_text=None, stats_handler=None, start_time=Non
 def get_user_selections():
     """Get all user selections before starting the analysis display."""
     # Display ASCII art welcome message
-    with open("./cli/static/welcome.txt", "r") as f:
+    with open("./cli/static/welcome.txt", "r", encoding="utf-8") as f:
         welcome_ascii = f.read()
 
     # Create welcome box content
@@ -543,7 +543,7 @@ def get_user_selections():
         )
     )
     selected_llm_provider, backend_url = select_llm_provider()
-    
+
     # Step 6: Thinking agents
     console.print(
         create_question_box(
@@ -623,19 +623,19 @@ def save_report_to_disk(final_state, ticker: str, save_path: Path):
     analyst_parts = []
     if final_state.get("market_report"):
         analysts_dir.mkdir(exist_ok=True)
-        (analysts_dir / "market.md").write_text(final_state["market_report"])
+        (analysts_dir / "market.md").write_text(final_state["market_report"], encoding="utf-8")
         analyst_parts.append(("Market Analyst", final_state["market_report"]))
     if final_state.get("sentiment_report"):
         analysts_dir.mkdir(exist_ok=True)
-        (analysts_dir / "sentiment.md").write_text(final_state["sentiment_report"])
+        (analysts_dir / "sentiment.md").write_text(final_state["sentiment_report"], encoding="utf-8")
         analyst_parts.append(("Social Analyst", final_state["sentiment_report"]))
     if final_state.get("news_report"):
         analysts_dir.mkdir(exist_ok=True)
-        (analysts_dir / "news.md").write_text(final_state["news_report"])
+        (analysts_dir / "news.md").write_text(final_state["news_report"], encoding="utf-8")
         analyst_parts.append(("News Analyst", final_state["news_report"]))
     if final_state.get("fundamentals_report"):
         analysts_dir.mkdir(exist_ok=True)
-        (analysts_dir / "fundamentals.md").write_text(final_state["fundamentals_report"])
+        (analysts_dir / "fundamentals.md").write_text(final_state["fundamentals_report"], encoding="utf-8")
         analyst_parts.append(("Fundamentals Analyst", final_state["fundamentals_report"]))
     if analyst_parts:
         content = "\n\n".join(f"### {name}\n{text}" for name, text in analyst_parts)
@@ -648,15 +648,15 @@ def save_report_to_disk(final_state, ticker: str, save_path: Path):
         research_parts = []
         if debate.get("bull_history"):
             research_dir.mkdir(exist_ok=True)
-            (research_dir / "bull.md").write_text(debate["bull_history"])
+            (research_dir / "bull.md").write_text(debate["bull_history"], encoding="utf-8")
             research_parts.append(("Bull Researcher", debate["bull_history"]))
         if debate.get("bear_history"):
             research_dir.mkdir(exist_ok=True)
-            (research_dir / "bear.md").write_text(debate["bear_history"])
+            (research_dir / "bear.md").write_text(debate["bear_history"], encoding="utf-8")
             research_parts.append(("Bear Researcher", debate["bear_history"]))
         if debate.get("judge_decision"):
             research_dir.mkdir(exist_ok=True)
-            (research_dir / "manager.md").write_text(debate["judge_decision"])
+            (research_dir / "manager.md").write_text(debate["judge_decision"], encoding="utf-8")
             research_parts.append(("Research Manager", debate["judge_decision"]))
         if research_parts:
             content = "\n\n".join(f"### {name}\n{text}" for name, text in research_parts)
@@ -666,7 +666,7 @@ def save_report_to_disk(final_state, ticker: str, save_path: Path):
     if final_state.get("trader_investment_plan"):
         trading_dir = save_path / "3_trading"
         trading_dir.mkdir(exist_ok=True)
-        (trading_dir / "trader.md").write_text(final_state["trader_investment_plan"])
+        (trading_dir / "trader.md").write_text(final_state["trader_investment_plan"], encoding="utf-8")
         sections.append(f"## III. Trading Team Plan\n\n### Trader\n{final_state['trader_investment_plan']}")
 
     # 4. Risk Management
@@ -676,15 +676,15 @@ def save_report_to_disk(final_state, ticker: str, save_path: Path):
         risk_parts = []
         if risk.get("aggressive_history"):
             risk_dir.mkdir(exist_ok=True)
-            (risk_dir / "aggressive.md").write_text(risk["aggressive_history"])
+            (risk_dir / "aggressive.md").write_text(risk["aggressive_history"], encoding="utf-8")
             risk_parts.append(("Aggressive Analyst", risk["aggressive_history"]))
         if risk.get("conservative_history"):
             risk_dir.mkdir(exist_ok=True)
-            (risk_dir / "conservative.md").write_text(risk["conservative_history"])
+            (risk_dir / "conservative.md").write_text(risk["conservative_history"], encoding="utf-8")
             risk_parts.append(("Conservative Analyst", risk["conservative_history"]))
         if risk.get("neutral_history"):
             risk_dir.mkdir(exist_ok=True)
-            (risk_dir / "neutral.md").write_text(risk["neutral_history"])
+            (risk_dir / "neutral.md").write_text(risk["neutral_history"], encoding="utf-8")
             risk_parts.append(("Neutral Analyst", risk["neutral_history"]))
         if risk_parts:
             content = "\n\n".join(f"### {name}\n{text}" for name, text in risk_parts)
@@ -694,12 +694,12 @@ def save_report_to_disk(final_state, ticker: str, save_path: Path):
         if risk.get("judge_decision"):
             portfolio_dir = save_path / "5_portfolio"
             portfolio_dir.mkdir(exist_ok=True)
-            (portfolio_dir / "decision.md").write_text(risk["judge_decision"])
+            (portfolio_dir / "decision.md").write_text(risk["judge_decision"], encoding="utf-8")
             sections.append(f"## V. Portfolio Manager Decision\n\n### Portfolio Manager\n{risk['judge_decision']}")
 
     # Write consolidated report
     header = f"# Trading Analysis Report: {ticker}\n\nGenerated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-    (save_path / "complete_report.md").write_text(header + "\n\n".join(sections))
+    (save_path / "complete_report.md").write_text(header + "\n\n".join(sections), encoding="utf-8")
     return save_path / "complete_report.md"
 
 
@@ -896,9 +896,38 @@ def format_tool_args(args, max_length=80) -> str:
         return result[:max_length - 3] + "..."
     return result
 
-def run_analysis():
-    # First get all user selections
-    selections = get_user_selections()
+def run_analysis(ticker: str = None, depth: int = 1, analysts: list[str] = None, non_interactive: bool = False):
+    if non_interactive:
+        import datetime
+        from cli.models import AnalystType
+
+        if not ticker:
+            ticker = "SPY"
+
+        selected_analysts = []
+        if analysts:
+            for a in analysts:
+                a_upper = a.upper()
+                if hasattr(AnalystType, a_upper):
+                    selected_analysts.append(getattr(AnalystType, a_upper))
+        if not selected_analysts:
+            selected_analysts = [AnalystType.MARKET]
+
+        selections = {
+            "ticker": ticker,
+            "analysis_date": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "analysts": selected_analysts,
+            "research_depth": depth,
+            "llm_provider": DEFAULT_CONFIG.get("llm_provider", "deepseek").lower(),
+            "backend_url": DEFAULT_CONFIG.get("backend_url"),
+            "shallow_thinker": DEFAULT_CONFIG.get("quick_think_llm", "gpt-5-mini"),
+            "deep_thinker": DEFAULT_CONFIG.get("deep_think_llm", "gpt-5.2"),
+            "google_thinking_level": DEFAULT_CONFIG.get("google_thinking_level"),
+            "openai_reasoning_effort": DEFAULT_CONFIG.get("openai_reasoning_effort"),
+        }
+    else:
+        # First get all user selections
+        selections = get_user_selections()
 
     # Create config with selected research depth
     config = DEFAULT_CONFIG.copy()
@@ -948,10 +977,10 @@ def run_analysis():
             func(*args, **kwargs)
             timestamp, message_type, content = obj.messages[-1]
             content = content.replace("\n", " ")  # Replace newlines with spaces
-            with open(log_file, "a") as f:
+            with open(log_file, "a", encoding="utf-8") as f:
                 f.write(f"{timestamp} [{message_type}] {content}\n")
         return wrapper
-    
+
     def save_tool_call_decorator(obj, func_name):
         func = getattr(obj, func_name)
         @wraps(func)
@@ -959,7 +988,7 @@ def run_analysis():
             func(*args, **kwargs)
             timestamp, tool_name, args = obj.tool_calls[-1]
             args_str = ", ".join(f"{k}={v}" for k, v in args.items())
-            with open(log_file, "a") as f:
+            with open(log_file, "a", encoding="utf-8") as f:
                 f.write(f"{timestamp} [Tool Call] {tool_name}({args_str})\n")
         return wrapper
 
@@ -972,7 +1001,7 @@ def run_analysis():
                 content = obj.report_sections[section_name]
                 if content:
                     file_name = f"{section_name}.md"
-                    with open(report_dir / file_name, "w") as f:
+                    with open(report_dir / file_name, "w", encoding="utf-8") as f:
                         f.write(content)
         return wrapper
 
@@ -1020,8 +1049,12 @@ def run_analysis():
         # Stream the analysis
         trace = []
         for chunk in graph.graph.stream(init_agent_state, **args):
+
+            if not chunk or not isinstance(chunk, dict):
+                continue
+
             # Process messages if present (skip duplicates via message ID)
-            if len(chunk["messages"]) > 0:
+            if "messages" in chunk and len(chunk["messages"]) > 0:
                 last_message = chunk["messages"][-1]
                 msg_id = getattr(last_message, "id", None)
 
@@ -1144,32 +1177,48 @@ def run_analysis():
     # Post-analysis prompts (outside Live context for clean interaction)
     console.print("\n[bold cyan]Analysis Complete![/bold cyan]\n")
 
-    # Prompt to save report
-    save_choice = typer.prompt("Save report?", default="Y").strip().upper()
-    if save_choice in ("Y", "YES", ""):
+    if not non_interactive:
+        # Prompt to save report
+        save_choice = typer.prompt("Save report?", default="Y").strip().upper()
+        if save_choice in ("Y", "YES", ""):
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            default_path = Path.cwd() / "reports" / f"{selections['ticker']}_{timestamp}"
+            save_path_str = typer.prompt(
+                "Save path (press Enter for default)",
+                default=str(default_path)
+            ).strip()
+            save_path = Path(save_path_str)
+            try:
+                report_file = save_report_to_disk(final_state, selections["ticker"], save_path)
+                console.print(f"\n[green]✓ Report saved to:[/green] {save_path.resolve()}")
+                console.print(f"  [dim]Complete report:[/dim] {report_file.name}")
+            except Exception as e:
+                console.print(f"[red]Error saving report: {e}[/red]")
+
+        # Prompt to display full report
+        display_choice = typer.prompt("\nDisplay full report on screen?", default="Y").strip().upper()
+        if display_choice in ("Y", "YES", ""):
+            display_complete_report(final_state)
+    else:
+        # Auto-save report in non-interactive mode
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        default_path = Path.cwd() / "reports" / f"{selections['ticker']}_{timestamp}"
-        save_path_str = typer.prompt(
-            "Save path (press Enter for default)",
-            default=str(default_path)
-        ).strip()
-        save_path = Path(save_path_str)
+        save_path = Path.cwd() / "reports" / f"{selections['ticker']}_{timestamp}"
         try:
             report_file = save_report_to_disk(final_state, selections["ticker"], save_path)
-            console.print(f"\n[green]✓ Report saved to:[/green] {save_path.resolve()}")
+            console.print(f"\n[green]✓ Report auto-saved to:[/green] {save_path.resolve()}")
             console.print(f"  [dim]Complete report:[/dim] {report_file.name}")
         except Exception as e:
-            console.print(f"[red]Error saving report: {e}[/red]")
-
-    # Prompt to display full report
-    display_choice = typer.prompt("\nDisplay full report on screen?", default="Y").strip().upper()
-    if display_choice in ("Y", "YES", ""):
-        display_complete_report(final_state)
+            console.print(f"[red]Error auto-saving report: {e}[/red]")
 
 
 @app.command()
-def analyze():
-    run_analysis()
+def analyze(
+    ticker: str = typer.Option(None, "--ticker", "-t", help="Ticker symbol to analyze"),
+    depth: int = typer.Option(1, "--depth", "-d", help="Research depth (1=Shallow, 3=Medium, 5=Deep)"),
+    analysts: list[str] = typer.Option(None, "--analyst", "-a", help="Analysts to include (e.g. market, social, news, fundamentals)"),
+    non_interactive: bool = typer.Option(False, "--non-interactive", help="Run without interactive prompts"),
+):
+    run_analysis(ticker=ticker, depth=depth, analysts=analysts, non_interactive=non_interactive)
 
 
 if __name__ == "__main__":
