@@ -25,6 +25,7 @@ class UnifiedChatOpenAI(ChatOpenAI):
             model_lower.startswith("o1")
             or model_lower.startswith("o3")
             or "gpt-5" in model_lower
+            or "deepseek-reasoner" in model_lower
         )
 
 
@@ -58,6 +59,11 @@ class OpenAIClient(BaseLLMClient):
         elif self.provider == "ollama":
             llm_kwargs["base_url"] = "http://localhost:11434/v1"
             llm_kwargs["api_key"] = "ollama"  # Ollama doesn't require auth
+        elif self.provider == "deepseek":
+            llm_kwargs["base_url"] = "https://api.deepseek.com/v1"
+            api_key = os.environ.get("DEEPSEEK_API_KEY")
+            if api_key:
+                llm_kwargs["api_key"] = api_key
         elif self.base_url:
             llm_kwargs["base_url"] = self.base_url
 
