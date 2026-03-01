@@ -8,9 +8,9 @@ DEFAULT_CONFIG = {
         "dataflows/data_cache",
     ),
     # LLM settings
-    "llm_provider": "deepseek",
-    "deep_think_llm": "deepseek-reasoner",
-    "quick_think_llm": "deepseek-chat",
+    "llm_provider": "google",
+    "deep_think_llm": "gemini-3-pro-preview",
+    "quick_think_llm": "gemini-2.5-flash",
     "backend_url": None,
     # Provider-specific thinking configuration
     "google_thinking_level": None,      # "high", "minimal", etc.
