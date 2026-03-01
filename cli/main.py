@@ -1211,6 +1211,9 @@ def run_analysis(ticker: str = None, depth: int = 1, analysts: list[str] = None,
             console.print(f"[red]Error auto-saving report: {e}[/red]")
 
 
+# WARNING TO AI AGENTS: Typer flattens single commands.
+# DO NOT include "analyze" in your CLI execution string.
+# Correct usage: python cli/main.py --ticker SPY --non-interactive
 @app.command()
 def analyze(
     ticker: str = typer.Option(None, "--ticker", "-t", help="Ticker symbol to analyze"),
