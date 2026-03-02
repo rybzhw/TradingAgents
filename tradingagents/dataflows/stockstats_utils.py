@@ -39,14 +39,39 @@ class StockstatsUtils:
             data = pd.read_csv(data_file)
             data["Date"] = pd.to_datetime(data["Date"])
         else:
+            # Get stock info to find the actual listing date
+            ticker_obj = yf.Ticker(symbol)
+            info = ticker_obj.info or {}
+
+            # Check for listing date: prefer firstTradeDate, fallback to ipoExpectedDate
+            first_trade_date = info.get("firstTradeDate")
+            ipo_date = None
+            if first_trade_date:
+                ipo_date = pd.to_datetime(first_trade_date, unit="s")
+            elif info.get("ipoExpectedDate"):
+                ipo_date = pd.to_datetime(info.get("ipoExpectedDate"))
+
+            # Use the earlier of: 15 years ago or the stock's first trade date
+            effective_start_date = start_date
+            if ipo_date is not None and ipo_date > start_date:
+                effective_start_date = ipo_date
+
             data = yf.download(
                 symbol,
-                start=start_date_str,
+                start=effective_start_date.strftime("%Y-%m-%d"),
                 end=end_date_str,
                 multi_level_index=False,
                 progress=False,
                 auto_adjust=True,
             )
+
+            # Handle empty DataFrame (e.g., stock not found or no data available)
+            if data.empty:
+                raise ValueError(
+                    f"No data available for symbol '{symbol}'. "
+                    "The symbol may be invalid or not listed on the specified date range."
+                )
+
             data = data.reset_index()
             data.to_csv(data_file, index=False)
 

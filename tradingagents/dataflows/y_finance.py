@@ -17,8 +17,48 @@ def get_YFin_data_online(
     # Create ticker object
     ticker = yf.Ticker(symbol.upper())
 
+    # Get stock info to validate the symbol and get listing date
+    try:
+        info = ticker.info or {}
+    except Exception:
+        info = {}
+
+    # Check for listing date: prefer firstTradeDate, fallback to ipoExpectedDate
+    import pandas as pd
+    first_trade_date = info.get("firstTradeDate")
+    ipo_date = None
+
+    if first_trade_date:
+        ipo_date = pd.Timestamp(first_trade_date, unit="s")
+    elif info.get("ipoExpectedDate"):
+        # Use expected IPO date as fallback for newly listed stocks
+        ipo_date = pd.Timestamp(info.get("ipoExpectedDate"))
+
+    # Adjust start_date if stock was listed after the requested start date
+    effective_start_date = start_date
+    is_newly_listed = ipo_date is not None and ipo_date > pd.Timestamp(start_date)
+    if is_newly_listed:
+        effective_start_date = ipo_date.strftime("%Y-%m-%d")
+
     # Fetch historical data for the specified date range
-    data = ticker.history(start=start_date, end=end_date)
+    # Handle yfinance internal errors (e.g., for newly listed stocks)
+    try:
+        # For newly listed stocks, yfinance may not work well with start/end dates
+        # Try using period-based approach instead
+        if is_newly_listed:
+            data = ticker.history(period="5d")
+            if not data.empty:
+                # Filter to the requested date range
+                data = data.loc[data.index <= end_date]
+        else:
+            data = ticker.history(start=effective_start_date, end=end_date)
+    except TypeError as e:
+        # This error occurs when yfinance can't fetch data (e.g., newly listed IPOs)
+        if "NoneType" in str(e) and "chart" in str(e):
+            return f"无法获取 {symbol} 的股票数据。该股票可能刚刚上市（IPO），数据供应商暂未提供历史交易数据。建议使用更早上市的股票代码。"
+        return f"Error fetching data for '{symbol}': {str(e)}"
+    except Exception as e:
+        return f"Error fetching data for '{symbol}': {str(e)}"
 
     # Check if data is empty
     if data.empty:
@@ -235,14 +275,39 @@ def _get_stock_stats_bulk(
             data = pd.read_csv(data_file)
             data["Date"] = pd.to_datetime(data["Date"])
         else:
+            # Get stock info to find the actual listing date
+            ticker_obj = yf.Ticker(symbol)
+            info = ticker_obj.info or {}
+
+            # Check for listing date: prefer firstTradeDate, fallback to ipoExpectedDate
+            first_trade_date = info.get("firstTradeDate")
+            ipo_date = None
+            if first_trade_date:
+                ipo_date = pd.to_datetime(first_trade_date, unit="s")
+            elif info.get("ipoExpectedDate"):
+                ipo_date = pd.to_datetime(info.get("ipoExpectedDate"))
+
+            # Use the earlier of: 15 years ago or the stock's first trade date
+            effective_start_date = start_date
+            if ipo_date is not None and ipo_date > start_date:
+                effective_start_date = ipo_date
+
             data = yf.download(
                 symbol,
-                start=start_date_str,
+                start=effective_start_date.strftime("%Y-%m-%d"),
                 end=end_date_str,
                 multi_level_index=False,
                 progress=False,
                 auto_adjust=True,
             )
+
+            # Handle empty DataFrame (e.g., stock not found or no data available)
+            if data.empty:
+                raise ValueError(
+                    f"No data available for symbol '{symbol}'. "
+                    "The symbol may be invalid or not listed on the specified date range."
+                )
+
             data = data.reset_index()
             data.to_csv(data_file, index=False)
         
