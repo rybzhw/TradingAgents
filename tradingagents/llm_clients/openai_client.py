@@ -64,6 +64,11 @@ class OpenAIClient(BaseLLMClient):
             api_key = os.environ.get("DEEPSEEK_API_KEY")
             if api_key:
                 llm_kwargs["api_key"] = api_key
+        elif self.provider == "qwen":
+            llm_kwargs["base_url"] = "https://coding.dashscope.aliyuncs.com/v1"
+            api_key = os.environ.get("DASHSCOPE_API_KEY")
+            if api_key:
+                llm_kwargs["api_key"] = api_key
         elif self.base_url:
             llm_kwargs["base_url"] = self.base_url
 

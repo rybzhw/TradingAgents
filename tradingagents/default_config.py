@@ -8,9 +8,9 @@ DEFAULT_CONFIG = {
         "dataflows/data_cache",
     ),
     # LLM settings
-    "llm_provider": "google",
-    "deep_think_llm": "gemini-3-pro-preview",
-    "quick_think_llm": "gemini-2.5-flash",
+    "llm_provider": "qwen",
+    "deep_think_llm": "qwen3.5-plus",
+    "quick_think_llm": "qwen3.5-plus",
     "backend_url": None,
     # Provider-specific thinking configuration
     "google_thinking_level": None,      # "high", "minimal", etc.
